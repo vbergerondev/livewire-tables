@@ -4,8 +4,8 @@ namespace Vbergeron\LivewireTables\Traits;
 
 use Closure;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Livewire\Attributes\Url;
-use stdClass;
 use Vbergeron\LivewireTables\Columns\Column;
 
 trait WithSearching
@@ -47,7 +47,7 @@ trait WithSearching
             return $next($items);
         }
 
-        $items = array_filter($items, function (stdClass $item): bool {
+        $items = array_filter($items, function (Model $item): bool {
             $fields = collect($this->columns())
                 ->filter(fn (Column $column): bool => $column->isSearchable())
                 ->pluck('field');

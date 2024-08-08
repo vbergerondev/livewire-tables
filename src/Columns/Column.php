@@ -3,6 +3,7 @@
 namespace Vbergeron\LivewireTables\Columns;
 
 use Closure;
+use Illuminate\Database\Eloquent\Model;
 
 abstract class Column
 {
@@ -80,10 +81,10 @@ abstract class Column
         return $this->callback;
     }
 
-    public function getContent(object $model): string
+    public function getContent(Model $model): string
     {
         return is_callable($this->callback) ? call_user_func($this->callback, $model) : $this->render($model);
     }
 
-    abstract public function render(object $model): string;
+    abstract public function render(Model $model): string;
 }

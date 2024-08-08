@@ -11,7 +11,6 @@ use Illuminate\View\View;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
 use Livewire\WithPagination;
-use stdClass;
 use Vbergeron\LivewireTables\Columns\Column;
 use Vbergeron\LivewireTables\Traits\WithJoins;
 use Vbergeron\LivewireTables\Traits\WithPageSize;
@@ -85,9 +84,12 @@ abstract class LivewireTables extends Component
         return $this->queryBuilder->paginate($this->pageSize);
     }
 
+    /**
+     * @return LengthAwarePaginator<Model>
+     */
     private function paginatedArray(): LengthAwarePaginator
     {
-        $items = array_map(fn (array $item): stdClass => (object) $item, $this->source());
+        $items = array_map(fn (array $item): Model => new TableData($item), $this->source());
 
         $items = Pipeline::send($items)
             ->through([
@@ -99,7 +101,7 @@ abstract class LivewireTables extends Component
         $offset = max(0, ($this->getPage() - 1) * $this->pageSize);
 
         return new LengthAwarePaginator(
-            array_slice($items, $offset, $this->pageSize),
+            array_slice($items, (int) $offset, $this->pageSize),
             count($items),
             $this->pageSize,
             $this->getPage(),
