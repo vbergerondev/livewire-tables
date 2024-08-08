@@ -10,7 +10,7 @@ trait WithPageSize
 
     public function bootWithPageSize(): void
     {
-        $this->pageSize = config('livewire-datatable.page-size');
+        $this->pageSize = config('livewire-tables.page-size');
     }
 
     public function updatedPageSize(): void

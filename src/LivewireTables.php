@@ -48,7 +48,7 @@ abstract class LivewireTables extends Component
 
     public function render(): View
     {
-        return view('livewire-datatable::index', [
+        return view('livewire-tables::index', [
             'columns' => $this->columns(),
             'tableFilters' => $this->filters(),
         ]);

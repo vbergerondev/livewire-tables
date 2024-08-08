@@ -1,6 +1,5 @@
 <?php
 
-// config for Vbergeron/LivewireTables
 return [
-
+    'page-size' => 10,
 ];
