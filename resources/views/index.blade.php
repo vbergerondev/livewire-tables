@@ -5,15 +5,6 @@
         <x-livewire-tables::page-size-selector />
     </div>
 
-
-    @foreach($tableFilters as $filter)
-        @php
-            /** @var \Vbergeron\LivewireTables\Filters\Filter $filter */
-        @endphp
-
-        <x-dynamic-component component="livewire-tables::filters.{{$filter->getBladeComponentName() }}" :$filter />
-    @endforeach
-
     <table class="table table-striped">
         <thead>
         <tr>

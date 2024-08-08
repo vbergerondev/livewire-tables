@@ -13,8 +13,6 @@ use Livewire\Component;
 use Livewire\WithPagination;
 use stdClass;
 use Vbergeron\LivewireTables\Columns\Column;
-use Vbergeron\LivewireTables\Filters\Filter;
-use Vbergeron\LivewireTables\Traits\WithFiltering;
 use Vbergeron\LivewireTables\Traits\WithJoins;
 use Vbergeron\LivewireTables\Traits\WithPageSize;
 use Vbergeron\LivewireTables\Traits\WithSearching;
@@ -22,7 +20,6 @@ use Vbergeron\LivewireTables\Traits\WithSorting;
 
 abstract class LivewireTables extends Component
 {
-    use WithFiltering;
     use WithJoins;
     use WithPageSize;
     use WithPagination;
@@ -50,7 +47,6 @@ abstract class LivewireTables extends Component
     {
         return view('livewire-tables::index', [
             'columns' => $this->columns(),
-            'tableFilters' => $this->filters(),
         ]);
     }
 
@@ -72,9 +68,6 @@ abstract class LivewireTables extends Component
     /** @return Column[] */
     abstract protected function columns(): array;
 
-    /** @return Filter[] */
-    abstract protected function filters(): array;
-
     private function paginatedQueryBuilder(): LengthAwarePaginator
     {
         $this->queryBuilder = Pipeline::send($this->queryBuilder)
@@ -82,7 +75,6 @@ abstract class LivewireTables extends Component
                 $this->applyJoins(...),
                 $this->applySort(...),
                 $this->applySearch(...),
-                $this->applyFilters(...),
             ])
             ->thenReturn();
 
