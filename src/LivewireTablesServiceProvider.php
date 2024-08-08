@@ -4,7 +4,6 @@ namespace Vbergeron\LivewireTables;
 
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-use Vbergeron\LivewireTables\Commands\LivewireTablesCommand;
 
 class LivewireTablesServiceProvider extends PackageServiceProvider
 {
