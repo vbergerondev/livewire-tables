@@ -90,7 +90,7 @@ abstract class LivewireTables extends Component
      */
     private function paginatedArray(): LengthAwarePaginator
     {
-        $items = array_map(fn (array $item): Model => (new TableData())->setRawAttributes(Arr::dot($item)), $this->source());
+        $items = array_map(fn (array $item): Model => (new TableData)->setRawAttributes(Arr::dot($item)), $this->source());
 
         $items = Pipeline::send($items)
             ->through([
