@@ -8,6 +8,6 @@ final class TextColumn extends Column
 {
     public function render(Model $model): string
     {
-        return (string) data_get($model, $this->field);
+        return (string) $model->{$this->field};
     }
 }

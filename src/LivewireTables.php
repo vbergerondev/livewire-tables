@@ -6,6 +6,7 @@ use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Pipeline;
 use Illuminate\View\View;
 use Livewire\Attributes\Computed;
@@ -89,7 +90,7 @@ abstract class LivewireTables extends Component
      */
     private function paginatedArray(): LengthAwarePaginator
     {
-        $items = array_map(fn (array $item): Model => new TableData($item), $this->source());
+        $items = array_map(fn (array $item): Model => (new TableData())->setRawAttributes(Arr::dot($item)), $this->source());
 
         $items = Pipeline::send($items)
             ->through([
