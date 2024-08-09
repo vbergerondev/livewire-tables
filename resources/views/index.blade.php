@@ -1,8 +1,13 @@
 <div x-data>
     <x-livewire-tables::search />
 
-    <div class="my-3">
-        <x-livewire-tables::page-size-selector />
+    <div class="my-1">
+        <div class="d-flex align-items-center justify-content-between">
+            <x-livewire-tables::page-size-selector />
+            <small class="d-block text-muted">
+                Total: {{ $this->rows->total() }}
+            </small>
+        </div>
     </div>
 
     <table class="table table-striped">
@@ -26,9 +31,6 @@
     </table>
 
     <div class="d-flex align-items-center justify-content-between">
-        <small class="d-block text-muted">
-            Total: {{ $this->rows->total() }}
-        </small>
         <div>
             {{ $this->rows->links(data: ['scrollTo' => false]) }}
         </div>
