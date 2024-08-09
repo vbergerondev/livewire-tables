@@ -17,6 +17,7 @@ class LivewireTablesServiceProvider extends PackageServiceProvider
         $package
             ->name('livewire-tables')
             ->hasConfigFile()
-            ->hasViews();
+            ->hasViews()
+            ->hasTranslations();
     }
 }
