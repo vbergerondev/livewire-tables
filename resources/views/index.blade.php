@@ -1,6 +1,10 @@
 <div x-data>
     <x-livewire-tables::search />
 
+    @foreach($tableFilters as $filter)
+        <x-dynamic-component :component="$filter->getBladeComponentName()" :$filter />
+    @endforeach
+
     <div class="my-1">
         <div class="d-flex align-items-center justify-content-between">
             <x-livewire-tables::page-size-selector />

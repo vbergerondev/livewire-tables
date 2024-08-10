@@ -26,18 +26,16 @@ trait WithSearching
 
         $this->search = (string) str($this->search)->squish();
 
-        collect($this->columns())
+        $fields = collect($this->columns())
             ->filter(fn (Column $column): bool => $column->isSearchable())
-            ->each(function (Column $column, int $index) use ($builder) {
+            ->map(function (Column $column, int $index) use ($builder) {
                 $table = $builder->getModel()->getTable();
-                $field = $column->isBaseField() ? "$table.$column->field" : $column->field;
 
-                if ($index === 0) {
-                    $builder->where($field, 'like', "%$this->search%");
-                } else {
-                    $builder->orWhere($field, 'like', "%$this->search%");
-                }
-            });
+                return $column->isBaseField() ? "$table.$column->field" : $column->field;
+            })
+            ->all();
+
+        $builder->whereAny($fields, 'LIKE', "%{$this->search}%");
 
         return $next($builder);
     }

@@ -2,6 +2,7 @@
 
 namespace Vbergeron\LivewireTables;
 
+use Closure;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -10,6 +11,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Pipeline;
 use Illuminate\View\View;
 use Livewire\Attributes\Computed;
+use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Vbergeron\LivewireTables\Columns\Column;
@@ -27,6 +29,9 @@ abstract class LivewireTables extends Component
     use WithSorting;
 
     private ?Builder $queryBuilder = null;
+
+    #[Url(except: '')]
+    public array $filters = [];
 
     /**
      * @throws Exception
@@ -47,6 +52,7 @@ abstract class LivewireTables extends Component
     {
         return view('livewire-tables::index', [
             'columns' => $this->columns(),
+            'tableFilters' => $this->filters(),
         ]);
     }
 
@@ -68,6 +74,8 @@ abstract class LivewireTables extends Component
     /** @return Column[] */
     abstract protected function columns(): array;
 
+    abstract protected function filters(): array;
+
     private function paginatedQueryBuilder(): LengthAwarePaginator
     {
         $this->queryBuilder = Pipeline::send($this->queryBuilder)
@@ -75,6 +83,13 @@ abstract class LivewireTables extends Component
                 $this->applyJoins(...),
                 $this->applySort(...),
                 $this->applySearch(...),
+                function (Builder $builder, Closure $next) {
+                    foreach (Arr::dot($this->filters) as $k => $v) {
+                        $builder->where($k, $v);
+                    }
+
+                    return $next($builder);
+                },
             ])
             ->thenReturn();
 
