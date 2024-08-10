@@ -78,8 +78,9 @@ abstract class LivewireTables extends Component
             ])
             ->thenReturn();
 
+        $table = $this->queryBuilder->getModel()->getTable();
         $this->queryBuilder->addSelect(
-            array_map(fn (Column $column) => $column->asSqlField($this->queryBuilder->getModel()->getTable())." AS $column->field", $this->columns())
+            array_map(fn (Column $column) => ($column->isBaseField() ? "$table.$column->field" : $column->field)." AS $column->field", $this->columns())
         );
 
         return $this->queryBuilder->paginate($this->pageSize);

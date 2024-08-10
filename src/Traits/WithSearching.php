@@ -29,7 +29,8 @@ trait WithSearching
         collect($this->columns())
             ->filter(fn (Column $column): bool => $column->isSearchable())
             ->each(function (Column $column, int $index) use ($builder) {
-                $field = $column->asSqlField($builder->getModel()->getTable());
+                $table = $builder->getModel()->getTable();
+                $field = $column->isBaseField() ? "$table.$column->field" : $column->field;
 
                 if ($index === 0) {
                     $builder->where($field, 'like', "%$this->search%");
