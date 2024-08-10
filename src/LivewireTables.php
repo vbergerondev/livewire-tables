@@ -15,6 +15,7 @@ use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Vbergeron\LivewireTables\Columns\Column;
+use Vbergeron\LivewireTables\Filters\SelectFilter;
 use Vbergeron\LivewireTables\Traits\WithJoins;
 use Vbergeron\LivewireTables\Traits\WithPageSize;
 use Vbergeron\LivewireTables\Traits\WithSearching;
@@ -30,7 +31,7 @@ abstract class LivewireTables extends Component
 
     private ?Builder $queryBuilder = null;
 
-    #[Url(except: '')]
+    //    #[Url(except: '')]
     public array $filters = [];
 
     /**
@@ -84,8 +85,28 @@ abstract class LivewireTables extends Component
                 $this->applySort(...),
                 $this->applySearch(...),
                 function (Builder $builder, Closure $next) {
-                    foreach (Arr::dot($this->filters) as $k => $v) {
-                        $builder->where($k, $v);
+                    foreach ($this->filters as $k => $v) {
+                        /** @var SelectFilter $filter */
+                        $filter = collect($this->filters())
+                            ->firstWhere(fn (SelectFilter $filter) => $filter->getField() === $k);
+
+                        if (! $filter instanceof SelectFilter) {
+                            continue;
+                        }
+
+                        if ($filter->getCallback() instanceof Closure) {
+                            call_user_func_array($filter->getCallback(), [$builder, $filter, $v]);
+
+                            continue;
+                        }
+
+                        if ($filter->isMultiple()) {
+                            $builder->whereIn($filter->getField(), $v);
+
+                            continue;
+                        }
+
+                        $builder->where($filter->getField(), $v);
                     }
 
                     return $next($builder);
