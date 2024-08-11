@@ -26,7 +26,7 @@ trait WithSearching
 
         $this->search = (string) str($this->search)->squish();
 
-        $fields = collect($this->columns())
+        $fields = collect($this->tableColumns)
             ->filter(fn (Column $column): bool => $column->isSearchable())
             ->map(function (Column $column, int $index) use ($builder) {
                 $table = $builder->getModel()->getTable();
@@ -47,7 +47,7 @@ trait WithSearching
         }
 
         $items = array_filter($items, function (Model $item): bool {
-            $fields = collect($this->columns())
+            $fields = collect($this->tableColumns)
                 ->filter(fn (Column $column): bool => $column->isSearchable())
                 ->pluck('field');
 

@@ -13,7 +13,7 @@ trait WithJoins
 {
     private function applyJoins(Builder $builder, Closure $next): Builder
     {
-        collect($this->columns())
+        collect($this->tableColumns)
             ->reject(fn (Column $column) => $column->isBaseField())
             ->map(function (Column $column) use ($builder) {
                 $alias = $relationship = (string) str($column->field)->beforeLast('.');

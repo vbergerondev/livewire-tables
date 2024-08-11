@@ -2,7 +2,6 @@
 
 namespace Vbergeron\LivewireTables;
 
-use Closure;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -11,11 +10,10 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Pipeline;
 use Illuminate\View\View;
 use Livewire\Attributes\Computed;
-use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Vbergeron\LivewireTables\Columns\Column;
-use Vbergeron\LivewireTables\Filters\SelectFilter;
+use Vbergeron\LivewireTables\Traits\WithFiltering;
 use Vbergeron\LivewireTables\Traits\WithJoins;
 use Vbergeron\LivewireTables\Traits\WithPageSize;
 use Vbergeron\LivewireTables\Traits\WithSearching;
@@ -23,6 +21,7 @@ use Vbergeron\LivewireTables\Traits\WithSorting;
 
 abstract class LivewireTables extends Component
 {
+    use WithFiltering;
     use WithJoins;
     use WithPageSize;
     use WithPagination;
@@ -30,9 +29,6 @@ abstract class LivewireTables extends Component
     use WithSorting;
 
     private ?Builder $queryBuilder = null;
-
-    //    #[Url(except: '')]
-    public array $filters = [];
 
     /**
      * @throws Exception
@@ -51,10 +47,7 @@ abstract class LivewireTables extends Component
 
     public function render(): View
     {
-        return view('livewire-tables::index', [
-            'columns' => $this->columns(),
-            'tableFilters' => $this->filters(),
-        ]);
+        return view('livewire-tables::index');
     }
 
     #[Computed]
@@ -67,15 +60,17 @@ abstract class LivewireTables extends Component
         return $this->paginatedArray();
     }
 
-    /**
-     * @return class-string<Model>|array|Builder
-     */
-    abstract protected function source(): string|array|Builder;
+    #[Computed]
+    public function tableFilters(): array
+    {
+        return $this->filters();
+    }
 
-    /** @return Column[] */
-    abstract protected function columns(): array;
-
-    abstract protected function filters(): array;
+    #[Computed]
+    public function tableColumns(): array
+    {
+        return $this->columns();
+    }
 
     private function paginatedQueryBuilder(): LengthAwarePaginator
     {
@@ -84,39 +79,13 @@ abstract class LivewireTables extends Component
                 $this->applyJoins(...),
                 $this->applySort(...),
                 $this->applySearch(...),
-                function (Builder $builder, Closure $next) {
-                    foreach ($this->filters as $k => $v) {
-                        /** @var SelectFilter $filter */
-                        $filter = collect($this->filters())
-                            ->firstWhere(fn (SelectFilter $filter) => $filter->getField() === $k);
-
-                        if (! $filter instanceof SelectFilter) {
-                            continue;
-                        }
-
-                        if ($filter->getCallback() instanceof Closure) {
-                            call_user_func_array($filter->getCallback(), [$builder, $filter, $v]);
-
-                            continue;
-                        }
-
-                        if ($filter->isMultiple()) {
-                            $builder->whereIn($filter->getField(), $v);
-
-                            continue;
-                        }
-
-                        $builder->where($filter->getField(), $v);
-                    }
-
-                    return $next($builder);
-                },
+                $this->applyFilters(...),
             ])
             ->thenReturn();
 
         $table = $this->queryBuilder->getModel()->getTable();
         $this->queryBuilder->addSelect(
-            array_map(fn (Column $column) => ($column->isBaseField() ? "$table.$column->field" : $column->field)." AS $column->field", $this->columns())
+            array_map(fn (Column $column) => ($column->isBaseField() ? "$table.$column->field" : $column->field)." AS $column->field", $this->tableColumns)
         );
 
         return $this->queryBuilder->paginate($this->pageSize);
@@ -133,6 +102,7 @@ abstract class LivewireTables extends Component
             ->through([
                 $this->applySearchArray(...),
                 $this->applySortArray(...),
+                $this->applyFiltersArray(...),
             ])
             ->thenReturn();
 
@@ -146,4 +116,14 @@ abstract class LivewireTables extends Component
             [],
         );
     }
+
+    /**
+     * @return class-string<Model>|array|Builder
+     */
+    abstract protected function source(): string|array|Builder;
+
+    /** @return Column[] */
+    abstract protected function columns(): array;
+
+    abstract protected function filters(): array;
 }

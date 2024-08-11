@@ -1,7 +1,11 @@
+@php
+/** @var \Vbergeron\LivewireTables\Columns\Column $column */
+/** @var \Vbergeron\LivewireTables\Filters\Filter $filter */
+@endphp
 <div x-data>
     <x-livewire-tables::search />
 
-    @foreach($tableFilters as $filter)
+    @foreach($this->tableFilters as $filter)
         <x-dynamic-component :component="$filter->getBladeComponentName()" :$filter />
     @endforeach
 
@@ -17,7 +21,7 @@
     <table class="table table-striped">
         <thead>
         <tr>
-            @foreach($columns as $column)
+            @foreach($this->tableColumns as $column)
                 <x-livewire-tables::th :name="$column->name" :field="$column->field" :sortable="$column->isSortable()"/>
             @endforeach
         </tr>
@@ -26,7 +30,7 @@
         <tbody>
             @foreach($this->rows as $row)
                 <tr>
-                    @foreach($columns as $column)
+                    @foreach($this->tableColumns as $column)
                         <td>{{ $column->getContent($row) }}</td>
                     @endforeach
                 </tr>

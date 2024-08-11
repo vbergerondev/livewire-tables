@@ -2,18 +2,16 @@
 
 namespace Vbergeron\LivewireTables\Filters;
 
-use Closure;
-
-class SelectFilter
+final class SelectFilter extends Filter
 {
+    /** @var array<mixed, mixed> */
     private array $options = [];
 
-    public bool $multiple = false;
+    private bool $multiple = false;
 
-    public ?Closure $callback = null;
-
-    public function __construct(private string $name, private string $field) {}
-
+    /**
+     * @param  array<mixed, mixed>  $options
+     */
     public function withOptions(array $options): self
     {
         $this->options = $options;
@@ -21,16 +19,9 @@ class SelectFilter
         return $this;
     }
 
-    public function using(Closure $callback): self
+    public function getOptions(): array
     {
-        $this->callback = $callback;
-
-        return $this;
-    }
-
-    public function getBladeComponentName(): string
-    {
-        return 'livewire-tables::filters.select-filter';
+        return $this->options;
     }
 
     public function multiple(): self
@@ -40,23 +31,8 @@ class SelectFilter
         return $this;
     }
 
-    public function getField(): string
-    {
-        return str($this->field)->replace('.', '_');
-    }
-
-    public function getOptions(): array
-    {
-        return $this->options;
-    }
-
     public function isMultiple(): bool
     {
         return $this->multiple;
-    }
-
-    public function getCallback(): ?Closure
-    {
-        return $this->callback;
     }
 }
