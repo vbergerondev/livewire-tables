@@ -5,7 +5,7 @@ namespace Vbergeron\LivewireTables\Traits;
 use Closure;
 use Illuminate\Database\Eloquent\Builder;
 use Livewire\Attributes\Url;
-use Vbergeron\LivewireTables\Filters\SelectFilter;
+use Vbergeron\LivewireTables\Filters\Filter;
 
 trait WithFiltering
 {
@@ -14,12 +14,12 @@ trait WithFiltering
 
     private function applyFilters(Builder $builder, Closure $next): Builder
     {
-        foreach ($this->tableFilters as $k => $v) {
-            /** @var SelectFilter $filter */
+        foreach ($this->filters as $k => $v) {
+            /** @var Filter|null $filter */
             $filter = collect($this->tableFilters)
-                ->firstWhere(fn (SelectFilter $filter) => $filter->getField() === $k);
+                ->firstWhere(fn (Filter $filter) => $filter->getField() === $k);
 
-            if (! $filter instanceof SelectFilter) {
+            if (! $filter instanceof Filter) {
                 continue;
             }
 
