@@ -13,12 +13,18 @@ use Livewire\Attributes\Computed;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Vbergeron\LivewireTables\Columns\Column;
+use Vbergeron\LivewireTables\Filters\Filter;
 use Vbergeron\LivewireTables\Traits\WithFiltering;
 use Vbergeron\LivewireTables\Traits\WithJoins;
 use Vbergeron\LivewireTables\Traits\WithPageSize;
 use Vbergeron\LivewireTables\Traits\WithSearching;
 use Vbergeron\LivewireTables\Traits\WithSorting;
 
+/**
+ * @property Filter[] $tableFilters
+ * @property Column[] $tableColumns
+ * @property LengthAwarePaginator<Model> $rows
+ */
 abstract class LivewireTables extends Component
 {
     use WithFiltering;
@@ -28,6 +34,7 @@ abstract class LivewireTables extends Component
     use WithSearching;
     use WithSorting;
 
+    /** @var Builder<Model>|null */
     private ?Builder $queryBuilder = null;
 
     /**
@@ -50,6 +57,9 @@ abstract class LivewireTables extends Component
         return view('livewire-tables::index');
     }
 
+    /**
+     * @return LengthAwarePaginator<Model>
+     */
     #[Computed]
     public function rows(): LengthAwarePaginator
     {
@@ -60,12 +70,18 @@ abstract class LivewireTables extends Component
         return $this->paginatedArray();
     }
 
+    /**
+     * @return Filter[]
+     */
     #[Computed]
     public function tableFilters(): array
     {
         return $this->filters();
     }
 
+    /**
+     * @return Column[]
+     */
     #[Computed]
     public function tableColumns(): array
     {
@@ -85,9 +101,9 @@ abstract class LivewireTables extends Component
 
         $table = $this->queryBuilder->getModel()->getTable();
         $this->queryBuilder->addSelect(
-            array_map(fn (Column $column) => $column->isBaseField() && $column->usableInQueries()
+            array_map(fn (Column $column) => ($column->isBaseField() && $column->usableInQueries()
                     ? "$table.$column->field"
-                    : $column->field." AS $column->field",
+                    : $column->field)." AS $column->field",
                 $this->tableColumns)
         );
 

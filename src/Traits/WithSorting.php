@@ -15,13 +15,15 @@ trait WithSorting
     #[Locked]
     public bool $sortReverse = false;
 
-    public function sortBy(string $field): void
+    public function sortBy(string $field, ?bool $sortReverse = null): void
     {
+        $sortReverse ??= $this->sortReverse;
+
         if ($field === $this->sortField) {
             $this->sortReverse = ! $this->sortReverse;
         } else {
             $this->sortField = $field;
-            $this->sortReverse = false;
+            $this->sortReverse = $sortReverse;
         }
 
         $this->resetPage();
