@@ -40,7 +40,7 @@ trait WithSearching
         return $next($builder);
     }
 
-    public function applySearchArray(array $items, Closure $next): array
+    private function applySearchArray(array $items, Closure $next): array
     {
         if ($this->search === '') {
             return $next($items);
@@ -52,7 +52,7 @@ trait WithSearching
                 ->pluck('field');
 
             foreach ($fields as $field) {
-                if (str_contains(strtolower(data_get($item, $field)), strtolower($this->search))) {
+                if (str_contains(strtolower($item[$field] ?? ''), strtolower($this->search))) {
                     return true;
                 }
             }

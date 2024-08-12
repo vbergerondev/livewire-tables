@@ -22,11 +22,9 @@ abstract class Column
         public string $name,
         public ?string $field = null,
     ) {
-        if ($field === null) {
-            $this->field = (string) str($name)->snake();
-        }
+        $this->field ??= (string) str($name)->snake();
 
-        if (str_contains($field, '.')) {
+        if (str_contains($this->field, '.')) {
             $this->relations = explode('.', str($field)->beforeLast('.'));
         }
     }
@@ -47,6 +45,10 @@ abstract class Column
 
     public function sortable(): self
     {
+        if (! $this->usableInQueries()) {
+            throw new \Exception('You cannot mark a '.class_basename($this).' as a sortable column');
+        }
+
         $this->sortable = true;
 
         return $this;
@@ -59,6 +61,10 @@ abstract class Column
 
     public function searchable(): self
     {
+        if (! $this->usableInQueries()) {
+            throw new \Exception('You cannot mark a '.class_basename($this).' as a searchable column');
+        }
+
         $this->searchable = true;
 
         return $this;
@@ -84,6 +90,11 @@ abstract class Column
     public function getContent(Model $model): string
     {
         return is_callable($this->callback) ? call_user_func($this->callback, $model) : $this->render($model);
+    }
+
+    public function usableInQueries(): bool
+    {
+        return ! $this instanceof BladeColumn;
     }
 
     abstract public function render(Model $model): string;

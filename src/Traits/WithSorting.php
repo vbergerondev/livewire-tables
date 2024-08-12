@@ -4,11 +4,15 @@ namespace Vbergeron\LivewireTables\Traits;
 
 use Closure;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+use Livewire\Attributes\Locked;
 
 trait WithSorting
 {
+    #[Locked]
     public ?string $sortField = null;
 
+    #[Locked]
     public bool $sortReverse = false;
 
     public function sortBy(string $field): void
@@ -34,9 +38,18 @@ trait WithSorting
 
     private function applySortArray(array $items, Closure $next): array
     {
-        if ($this->sortField !== null) {
-            $this->sortReverse ? arsort($items)
-                : asort($items);
+        if ($this->sortField === null) {
+            return $next($items);
+        }
+
+        if ($this->sortReverse) {
+            usort($items, function (Model $a, Model $b) {
+                return $a[$this->sortField] <=> $b[$this->sortField];
+            });
+        } else {
+            usort($items, function (Model $a, Model $b) {
+                return $b[$this->sortField] <=> $a[$this->sortField];
+            });
         }
 
         return $next($items);
