@@ -4,6 +4,7 @@ namespace Vbergeron\LivewireTables\Traits;
 
 use Closure;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Livewire\Attributes\Url;
 use Vbergeron\LivewireTables\Filters\Filter;
 
@@ -43,7 +44,18 @@ trait WithFiltering
 
     private function applyFiltersArray(array $items, Closure $next): array
     {
-        // @TODO
+        $items = array_filter($items, function (Model $item): bool {
+            return collect($this->filters)
+                ->every(function (mixed $value, string $key) use ($item): bool {
+                    $key = (string) str($key)->replace('_', '.');
+
+                    if (is_array($value)) {
+                        return in_array($item->$key, $value);
+                    }
+
+                    return $value == $item->$key;
+                });
+        });
 
         return $next($items);
     }

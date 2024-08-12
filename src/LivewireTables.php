@@ -101,8 +101,8 @@ abstract class LivewireTables extends Component
         $items = Pipeline::send($items)
             ->through([
                 $this->applySearchArray(...),
-                $this->applySortArray(...),
                 $this->applyFiltersArray(...),
+                $this->applySortArray(...),
             ])
             ->thenReturn();
 
