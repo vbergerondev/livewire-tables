@@ -12,6 +12,7 @@ use Illuminate\View\View;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Vbergeron\LivewireTables\Columns\BladeColumn;
 use Vbergeron\LivewireTables\Columns\Column;
 use Vbergeron\LivewireTables\Traits\WithFiltering;
 use Vbergeron\LivewireTables\Traits\WithJoins;
@@ -85,7 +86,10 @@ abstract class LivewireTables extends Component
 
         $table = $this->queryBuilder->getModel()->getTable();
         $this->queryBuilder->addSelect(
-            array_map(fn (Column $column) => ($column->isBaseField() ? "$table.$column->field" : $column->field)." AS $column->field", $this->tableColumns)
+            array_map(fn (Column $column) => $column->isBaseField() && ! $column instanceof BladeColumn
+                    ? "$table.$column->field"
+                    : $column->field." AS $column->field",
+                $this->tableColumns)
         );
 
         return $this->queryBuilder->paginate($this->pageSize);

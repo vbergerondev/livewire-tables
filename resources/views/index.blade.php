@@ -31,7 +31,7 @@
             @foreach($this->rows as $row)
                 <tr>
                     @foreach($this->tableColumns as $column)
-                        <td>{{ $column->getContent($row) }}</td>
+                        <td>{!! $column->getContent($row) !!}</td>
                     @endforeach
                 </tr>
             @endforeach
