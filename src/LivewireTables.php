@@ -73,7 +73,7 @@ abstract class LivewireTables extends Component
     /**
      * @return Filter[]
      */
-    #[Computed]
+    #[Computed(persist: true)]
     public function tableFilters(): array
     {
         return $this->filters();
