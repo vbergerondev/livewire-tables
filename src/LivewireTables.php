@@ -47,7 +47,7 @@ abstract class LivewireTables extends Component
             $this->queryBuilder = $source;
         }
 
-        if (is_string($source)) {
+        if (is_string($source) && is_subclass_of($source, Model::class)) {
             $this->queryBuilder = $source::query();
         }
     }
