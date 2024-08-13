@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 final class BladeColumn extends Column
 {
-    public function __construct(string $name, private readonly ?Closure $view = null)
+    public function __construct(string $name, private readonly string|Closure $view)
     {
         parent::__construct($name);
     }
