@@ -2,21 +2,19 @@
 
 namespace Vbergeron\LivewireTables\Columns;
 
-use Closure;
 use Illuminate\Database\Eloquent\Model;
+use Vbergeron\LivewireTables\Columns\Traits\Formatable;
+use Vbergeron\LivewireTables\Columns\Traits\Searchable;
+use Vbergeron\LivewireTables\Columns\Traits\Sortable;
 
 abstract class Column
 {
+    use Formatable;
+    use Searchable;
+    use Sortable;
+
     /** @var string[] */
     public array $relations = [];
-
-    public string $table;
-
-    public ?Closure $callback = null;
-
-    private bool $sortable = false;
-
-    private bool $searchable = false;
 
     public function __construct(
         public string $name,
@@ -29,62 +27,9 @@ abstract class Column
         }
     }
 
-    public function asSqlField(string $table): string
-    {
-        if ($this->isBaseField()) {
-            return "$table.$this->field";
-        }
-
-        return $this->field;
-    }
-
     public function isBaseField(): bool
     {
-        return ! str_contains($this->field, '.');
-    }
-
-    public function sortable(): self
-    {
-        if (! $this->usableInQueries()) {
-            throw new \Exception('You cannot mark a '.class_basename($this).' as a sortable column');
-        }
-
-        $this->sortable = true;
-
-        return $this;
-    }
-
-    public function isSortable(): bool
-    {
-        return $this->sortable;
-    }
-
-    public function searchable(): self
-    {
-        if (! $this->usableInQueries()) {
-            throw new \Exception('You cannot mark a '.class_basename($this).' as a searchable column');
-        }
-
-        $this->searchable = true;
-
-        return $this;
-    }
-
-    public function isSearchable(): bool
-    {
-        return $this->searchable;
-    }
-
-    public function format(callable $callback): self
-    {
-        $this->callback = $callback;
-
-        return $this;
-    }
-
-    public function getCallback(): ?Closure
-    {
-        return $this->callback;
+        return $this->field !== null && ! str_contains($this->field, '.');
     }
 
     public function getContent(Model $model): string
