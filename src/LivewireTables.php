@@ -35,6 +35,12 @@ abstract class LivewireTables extends Component
     use WithSearching;
     use WithSorting;
 
+    public function setSelectedColumns(array $columns)
+    {
+        cache()->put('fields', $columns, now()->addWeek());
+        unset($this->selectedColumns);
+    }
+
     /**
      * @return Column[]
      */
@@ -42,7 +48,7 @@ abstract class LivewireTables extends Component
     public function selectedColumns(): array
     {
         // Coming from cache or db...
-        $fields = ['name', 'blade'];
+        $fields = cache()->get('fields', []);
 
         if ($fields === []) {
             return $this->tableColumns;

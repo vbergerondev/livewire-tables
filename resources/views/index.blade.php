@@ -18,6 +18,17 @@
         </div>
     </div>
 
+    <ul x-data="{ selectedColumns: @js(collect($this->selectedColumns)->pluck('field')) }">
+        @foreach($this->tableColumns as $column)
+            <li x-data="{ checked: selectedColumns.includes(@js($column->field)) }">
+                <input type="checkbox" value="{{ $column->field }}" x-model="selectedColumns">
+                <label>{{ $column->name }}</label>
+            </li>
+        @endforeach
+
+        <button @click="$wire.setSelectedColumns(selectedColumns)">set columns</button>
+    </ul>
+
     <table class="table table-striped">
         <thead>
         <tr>
