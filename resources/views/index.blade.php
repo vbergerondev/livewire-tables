@@ -21,7 +21,7 @@
     <table class="table table-striped">
         <thead>
         <tr>
-            @foreach($this->tableColumns as $column)
+            @foreach($this->selectedColumns as $column)
                 <x-livewire-tables::th :name="$column->name" :field="$column->field" :sortable="$column->isSortable()"/>
             @endforeach
         </tr>
@@ -30,7 +30,7 @@
         <tbody>
             @foreach($this->rows as $row)
                 <tr>
-                    @foreach($this->tableColumns as $column)
+                    @foreach($this->selectedColumns as $column)
                         <td>{!! $column->getContent($row) !!}</td>
                     @endforeach
                 </tr>

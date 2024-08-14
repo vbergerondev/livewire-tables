@@ -2,7 +2,6 @@
 
 namespace Vbergeron\LivewireTables;
 
-use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -24,6 +23,8 @@ use Vbergeron\LivewireTables\Traits\WithSorting;
  * @property Filter[] $tableFilters
  * @property Column[] $tableColumns
  * @property LengthAwarePaginator<Model> $rows
+ * @property Builder<Model>|null $queryBuilder
+ * @property Column[] $selectedColumns
  */
 abstract class LivewireTables extends Component
 {
@@ -34,22 +35,25 @@ abstract class LivewireTables extends Component
     use WithSearching;
     use WithSorting;
 
-    /** @var Builder<Model>|null */
-    private ?Builder $queryBuilder = null;
-
     /**
-     * @throws Exception
+     * @return Column[]
      */
-    public function boot(): void
+    #[Computed]
+    public function selectedColumns(): array
     {
-        $source = $this->source();
-        if ($source instanceof Builder) {
-            $this->queryBuilder = $source;
+        // Coming from cache or db...
+        $fields = ['name', 'blade'];
+
+        if ($fields === []) {
+            return $this->tableColumns;
         }
 
-        if (is_string($source) && is_subclass_of($source, Model::class)) {
-            $this->queryBuilder = $source::query();
-        }
+        return array_filter(
+            array_map(
+                fn ($field): ?Column => collect($this->tableColumns)->firstWhere(fn (Column $column): bool => $column->field === $field),
+                $fields,
+            )
+        );
     }
 
     public function render(): View
@@ -88,9 +92,27 @@ abstract class LivewireTables extends Component
         return $this->columns();
     }
 
+    /**
+     * @return Builder<Model>|null
+     */
+    #[Computed]
+    public function queryBuilder(): ?Builder
+    {
+        $source = $this->source();
+        if ($source instanceof Builder) {
+            return $source;
+        }
+
+        if (is_string($source) && is_subclass_of($source, Model::class)) {
+            return $source::query();
+        }
+
+        return null;
+    }
+
     private function paginatedQueryBuilder(): LengthAwarePaginator
     {
-        $this->queryBuilder = Pipeline::send($this->queryBuilder)
+        $builder = Pipeline::send($this->queryBuilder)
             ->through([
                 $this->applyJoins(...),
                 $this->applySort(...),
@@ -99,15 +121,16 @@ abstract class LivewireTables extends Component
             ])
             ->thenReturn();
 
-        $table = $this->queryBuilder->getModel()->getTable();
-        $this->queryBuilder->addSelect(
+        $table = $builder->getModel()->getTable();
+
+        $builder->addSelect(
             array_map(fn (Column $column) => ($column->isBaseField() && $column->usableInQueries()
                     ? "$table.$column->field"
                     : $column->field)." AS $column->field",
                 $this->tableColumns)
         );
 
-        return $this->queryBuilder->paginate($this->pageSize);
+        return $builder->paginate($this->pageSize);
     }
 
     /**
