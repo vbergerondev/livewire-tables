@@ -8,7 +8,7 @@ trait WithPageSize
 {
     public int $pageSize = 0;
 
-    public function bootWithPageSize(): void
+    public function mountWithPageSize(): void
     {
         $this->pageSize = config('livewire-tables.page-size');
     }

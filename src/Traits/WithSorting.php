@@ -46,11 +46,11 @@ trait WithSorting
 
         if ($this->sortReverse) {
             usort($items, function (Model $a, Model $b) {
-                return $a[$this->sortField] <=> $b[$this->sortField];
+                return strnatcasecmp($b[$this->sortField], $a[$this->sortField]);
             });
         } else {
             usort($items, function (Model $a, Model $b) {
-                return $b[$this->sortField] <=> $a[$this->sortField];
+                return strnatcasecmp($a[$this->sortField], $b[$this->sortField]);
             });
         }
 
