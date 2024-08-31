@@ -46,20 +46,23 @@ trait WithSearching
             return $next($items);
         }
 
-        $items = array_filter($items, function (Model $item): bool {
-            $fields = collect($this->tableColumns)
-                ->filter(fn (Column $column): bool => $column->isSearchable())
-                ->pluck('field');
-
-            foreach ($fields as $field) {
-                if (str_contains(strtolower($item[$field] ?? ''), strtolower($this->search))) {
-                    return true;
-                }
-            }
-
-            return false;
-        });
+        $items = array_filter($items, $this->filterArrayItems(...));
 
         return $next($items);
+    }
+
+    private function filterArrayItems(Model $item): bool
+    {
+        $fields = collect($this->tableColumns)
+            ->filter(fn (Column $column): bool => $column->isSearchable())
+            ->pluck('field');
+
+        foreach ($fields as $field) {
+            if (str_contains(strtolower($item[$field] ?? ''), strtolower($this->search))) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

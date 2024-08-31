@@ -6,6 +6,9 @@ use Livewire\Livewire;
 use Vbergeron\LivewireTables\Columns\TextColumn;
 use Vbergeron\LivewireTables\Filters\SelectFilter;
 use Vbergeron\LivewireTables\LivewireTables;
+use Vbergeron\LivewireTables\Traits\WithFiltering;
+use Vbergeron\LivewireTables\Traits\WithSearching;
+use Vbergeron\LivewireTables\Traits\WithSorting;
 
 use function PHPUnit\Framework\assertCount;
 use function PHPUnit\Framework\assertInstanceOf;
@@ -135,15 +138,15 @@ beforeEach(function () {
 it('renders', function () {
     Livewire::test($this->table)
         ->assertOk();
-});
+})->coversNothing();
 
 it('creates a length aware paginator', function () {
-    $rows = Livewire::test($this->table)->rows;
+    $rows = Livewire::test($this->table)->get('rows');
 
     assertSame(15, $rows->total());
     assertCount(10, $rows->all());
     assertInstanceOf(LengthAwarePaginator::class, $rows);
-});
+})->covers(LivewireTables::class);
 
 it('has pagination', function () {
     Livewire::test($this->table)
@@ -152,7 +155,7 @@ it('has pagination', function () {
         ->call('setPage', 2)
         ->assertSee('john+15@doe.com')
         ->assertDontSee('john+1@doe.com');
-});
+})->covers(LivewireTables::class);
 
 it('has sorting', function () {
     Livewire::test($this->table)
@@ -161,30 +164,30 @@ it('has sorting', function () {
         ->assertSeeInOrder(['john+15@doe.com', 'john+14@doe.com'])
         ->call('sortBy', 'email')
         ->assertSeeInOrder(['john+1@doe.com', 'john+2@doe.com']);
-});
+})->covers(WithSorting::class);
 
 it('has searching', function () {
     $component = Livewire::test($this->table)
         ->assertSee('john+2@doe.com');
 
-    assertSame(15, $component->rows->total());
+    assertSame(15, $component->get('rows')->total());
 
     $component->set('search', 'john+4@')
         ->assertDontSee('john+2@doe.com');
 
-    assertSame(1, $component->rows->total());
-});
+    assertSame(1, $component->get('rows')->total());
+})->covers(WithSearching::class);
 
 it('returns empty results when no search results', function () {
     $component = Livewire::test($this->table)
         ->assertSee('john+2@doe.com');
 
-    assertSame(15, $component->rows->total());
+    assertSame(15, $component->get('rows')->total());
 
     $component->set('search', 'testtesttest');
 
-    assertSame(0, $component->rows->total());
-});
+    assertSame(0, $component->get('rows')->total());
+})->covers(WithSearching::class);
 
 it('returns filtered items', function () {
     $component = Livewire::test($this->table)
@@ -192,11 +195,11 @@ it('returns filtered items', function () {
         ->set('filters', ['admin' => true])
         ->assertSeeInOrder(['john+15@doe.com', true]);
 
-    assertSame(1, $component->rows->total());
+    assertSame(1, $component->get('rows')->total());
 
     // Now we will test when the filter is multiple
     $component = Livewire::test($this->table)
         ->set('filters', ['admin' => [true, false]]);
 
-    assertSame(15, $component->rows->total());
-});
+    assertSame(15, $component->get('rows')->total());
+})->covers(WithFiltering::class);
