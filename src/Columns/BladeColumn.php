@@ -14,7 +14,7 @@ final class BladeColumn extends Column
 
     public function render(Model $model): string
     {
-        if (is_callable($this->view)) {
+        if ($this->view instanceof Closure) {
             return call_user_func($this->view, $model)->render();
         }
 

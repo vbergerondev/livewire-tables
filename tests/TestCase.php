@@ -30,6 +30,7 @@ class TestCase extends Orchestra
     {
         config()->set('database.default', 'testing');
         config()->set('app.key', 'base64:bXoycjJhd2w1bDVxaTVvZWVuNDVwMGkzdndkZnZ3czE=');
+        config()->set('view.paths', [__DIR__.'/../tests/views']);
 
         /*
         $migration = include __DIR__.'/../database/migrations/create_livewire-tables_table.php.stub';

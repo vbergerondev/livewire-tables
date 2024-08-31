@@ -6,6 +6,9 @@ trait Searchable
 {
     private bool $searchable = false;
 
+    /**
+     * @throws \Exception
+     */
     public function searchable(): self
     {
         if (! $this->isQueryable()) {
