@@ -37,7 +37,7 @@ abstract class Column
         return is_callable($this->callback) ? call_user_func($this->callback, $model) : $this->render($model);
     }
 
-    public function usableInQueries(): bool
+    public function isQueryable(): bool
     {
         return ! $this instanceof BladeColumn;
     }

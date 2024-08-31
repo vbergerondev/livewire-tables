@@ -18,21 +18,10 @@
         </div>
     </div>
 
-    <ul x-data="{ selectedColumns: @js(collect($this->selectedColumns)->pluck('field')) }">
-        @foreach($this->tableColumns as $column)
-            <li x-data="{ checked: selectedColumns.includes(@js($column->field)) }">
-                <input type="checkbox" value="{{ $column->field }}" x-model="selectedColumns">
-                <label>{{ $column->name }}</label>
-            </li>
-        @endforeach
-
-        <button @click="$wire.setSelectedColumns(selectedColumns)">set columns</button>
-    </ul>
-
     <table class="table table-striped">
         <thead>
         <tr>
-            @foreach($this->selectedColumns as $column)
+            @foreach($this->tableColumns as $column)
                 <x-livewire-tables::th :name="$column->name" :field="$column->field" :sortable="$column->isSortable()"/>
             @endforeach
         </tr>
@@ -41,7 +30,7 @@
         <tbody>
             @foreach($this->rows as $row)
                 <tr>
-                    @foreach($this->selectedColumns as $column)
+                    @foreach($this->tableColumns as $column)
                         <td>{!! $column->getContent($row) !!}</td>
                     @endforeach
                 </tr>

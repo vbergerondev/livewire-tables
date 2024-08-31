@@ -8,7 +8,7 @@ trait Sortable
 
     public function sortable(): self
     {
-        if (! $this->usableInQueries()) {
+        if (! $this->isQueryable()) {
             throw new \Exception('You cannot mark a '.class_basename($this).' as a sortable column');
         }
 

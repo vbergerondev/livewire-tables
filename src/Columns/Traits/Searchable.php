@@ -8,7 +8,7 @@ trait Searchable
 
     public function searchable(): self
     {
-        if (! $this->usableInQueries()) {
+        if (! $this->isQueryable()) {
             throw new \Exception('You cannot mark a '.class_basename($this).' as a searchable column');
         }
 

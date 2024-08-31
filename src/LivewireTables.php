@@ -24,7 +24,6 @@ use Vbergeron\LivewireTables\Traits\WithSorting;
  * @property Column[] $tableColumns
  * @property LengthAwarePaginator<Model> $rows
  * @property Builder<Model>|null $queryBuilder
- * @property Column[] $selectedColumns
  */
 abstract class LivewireTables extends Component
 {
@@ -34,33 +33,6 @@ abstract class LivewireTables extends Component
     use WithPagination;
     use WithSearching;
     use WithSorting;
-
-    public function setSelectedColumns(array $columns)
-    {
-        cache()->put('fields', $columns, now()->addWeek());
-        unset($this->selectedColumns);
-    }
-
-    /**
-     * @return Column[]
-     */
-    #[Computed]
-    public function selectedColumns(): array
-    {
-        // Coming from cache or db...
-        $fields = cache()->get('fields', []);
-
-        if ($fields === []) {
-            return $this->tableColumns;
-        }
-
-        return array_filter(
-            array_map(
-                fn ($field): ?Column => collect($this->tableColumns)->firstWhere(fn (Column $column): bool => $column->field === $field),
-                $fields,
-            )
-        );
-    }
 
     public function render(): View
     {
@@ -116,8 +88,12 @@ abstract class LivewireTables extends Component
         return null;
     }
 
+    /**
+     * @return LengthAwarePaginator<Model>
+     */
     private function paginatedQueryBuilder(): LengthAwarePaginator
     {
+        /** @var Builder<Model> $builder */
         $builder = Pipeline::send($this->queryBuilder)
             ->through([
                 $this->applyJoins(...),
@@ -130,10 +106,10 @@ abstract class LivewireTables extends Component
         $table = $builder->getModel()->getTable();
 
         $builder->addSelect(
-            array_map(fn (Column $column) => ($column->isBaseField() && $column->usableInQueries()
-                    ? "$table.$column->field"
-                    : $column->field)." AS $column->field",
-                $this->tableColumns)
+            collect($this->tableColumns)
+                ->reject(fn (Column $column) => ! $column->isQueryable())
+                ->map(fn (Column $column): string => ($column->isBaseField() ? "$table.$column->field" : $column->field)." AS $column->field")
+                ->all()
         );
 
         return $builder->paginate($this->pageSize);
