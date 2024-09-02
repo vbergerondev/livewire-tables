@@ -4,7 +4,7 @@
 @props(['filter'])
 <div>
     <label for="">{{$filter->getName()}}</label>
-    <select {{ $filter->isMultiple() ? 'multiple' : '' }} class="form-control" wire:model.live="filters.{{$filter->getField()}}">
+    <select {{ $filter->isMultiple() ? 'multiple' : '' }} class="form-control" wire:model="filters.{{$filter->getField()}}">
         <option value="null" selected>Choose an option</option>
         @foreach($filter->getOptions() as $k=>$v)
             <option value="{{$k}}">{{$v}}</option>

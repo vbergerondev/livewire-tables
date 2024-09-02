@@ -3,11 +3,15 @@
 /** @var \Vbergeron\LivewireTables\Filters\Filter $filter */
 @endphp
 <div x-data>
-    <x-livewire-tables::search />
 
-    @foreach($this->tableFilters as $filter)
-        <x-dynamic-component :component="$filter->getBladeComponentName()" :$filter />
-    @endforeach
+    <div class="row">
+        <div class="col-md-9">
+            <x-livewire-tables::search />
+        </div>
+        <div class="col-md-3">
+            <x-livewire-tables::filters />
+        </div>
+    </div>
 
     <div class="my-1">
         <div class="d-flex align-items-center justify-content-between">

@@ -1,7 +1,7 @@
 <?php
 
 use Vbergeron\LivewireTables\Columns\TextColumn;
-use Vbergeron\LivewireTables\TableData;
+use Vbergeron\LivewireTables\Models\TableData;
 
 describe('Text column', function () {
 

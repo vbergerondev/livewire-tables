@@ -1,7 +1,7 @@
 <?php
 
 use Vbergeron\LivewireTables\Columns\BooleanColumn;
-use Vbergeron\LivewireTables\TableData;
+use Vbergeron\LivewireTables\Models\TableData;
 
 describe('Boolean column', function () {
 

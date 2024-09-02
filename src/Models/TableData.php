@@ -1,6 +1,6 @@
 <?php
 
-namespace Vbergeron\LivewireTables;
+namespace Vbergeron\LivewireTables\Models;
 
 use Illuminate\Database\Eloquent\Model;
 

@@ -13,6 +13,11 @@ trait WithFiltering
     #[Url(except: '')]
     public array $filters = [];
 
+    public function setFilters(): void
+    {
+        $this->dispatch('filters-applied');
+    }
+
     private function applyFilters(Builder $builder, Closure $next): Builder
     {
         foreach ($this->filters as $k => $v) {

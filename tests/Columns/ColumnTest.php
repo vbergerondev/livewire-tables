@@ -3,7 +3,7 @@
 use Illuminate\Database\Eloquent\Model;
 use Vbergeron\LivewireTables\Columns\Column;
 use Vbergeron\LivewireTables\Columns\Traits\Formatable;
-use Vbergeron\LivewireTables\TableData;
+use Vbergeron\LivewireTables\Models\TableData;
 
 describe('Abstract column', function () {
 

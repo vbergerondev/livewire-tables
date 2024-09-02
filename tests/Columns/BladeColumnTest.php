@@ -1,7 +1,7 @@
 <?php
 
 use Vbergeron\LivewireTables\Columns\BladeColumn;
-use Vbergeron\LivewireTables\TableData;
+use Vbergeron\LivewireTables\Models\TableData;
 
 describe('Blade column', function () {
 

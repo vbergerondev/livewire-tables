@@ -9,16 +9,19 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Pipeline;
 use Illuminate\View\View;
 use Livewire\Attributes\Computed;
+use Livewire\Attributes\Isolate;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Vbergeron\LivewireTables\Columns\Column;
 use Vbergeron\LivewireTables\Filters\Filter;
+use Vbergeron\LivewireTables\Models\TableData;
 use Vbergeron\LivewireTables\Traits\WithFiltering;
 use Vbergeron\LivewireTables\Traits\WithJoins;
 use Vbergeron\LivewireTables\Traits\WithPageSize;
 use Vbergeron\LivewireTables\Traits\WithSearching;
 use Vbergeron\LivewireTables\Traits\WithSorting;
 
+#[Isolate]
 /**
  * @property Filter[] $tableFilters
  * @property Column[] $tableColumns
