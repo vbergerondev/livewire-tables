@@ -16,7 +16,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" x-ref="close" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" @click="$wire.setFilters(); $refs.close.click()">Save changes</button>
+                <button type="button" class="btn btn-primary" @click="$wire.void(); $refs.close.click()">Save changes</button>
             </div>
         </div>
     </div>

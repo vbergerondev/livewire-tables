@@ -19,6 +19,7 @@ use Vbergeron\LivewireTables\Traits\WithFiltering;
 use Vbergeron\LivewireTables\Traits\WithJoins;
 use Vbergeron\LivewireTables\Traits\WithPageSize;
 use Vbergeron\LivewireTables\Traits\WithSearching;
+use Vbergeron\LivewireTables\Traits\WithSelectableColumns;
 use Vbergeron\LivewireTables\Traits\WithSorting;
 
 #[Isolate]
@@ -36,6 +37,7 @@ abstract class LivewireTables extends Component
     use WithPagination;
     use WithSearching;
     use WithSorting;
+    use WithSelectableColumns;
 
     public function render(): View
     {
@@ -58,7 +60,7 @@ abstract class LivewireTables extends Component
     /**
      * @return Filter[]
      */
-    #[Computed(persist: true)]
+    #[Computed]
     public function tableFilters(): array
     {
         return $this->filters();
@@ -142,6 +144,12 @@ abstract class LivewireTables extends Component
             $this->getPage(),
             [],
         );
+    }
+
+    public function void(): void
+    {
+        // Does nothing and will be called by various components to let
+        // Livewire sync its frontend and backend state
     }
 
     /**
