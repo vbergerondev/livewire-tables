@@ -10,7 +10,7 @@ trait WithSelectableColumns
 
     public function mountWithSelectableColumns(): void
     {
-        $this->selectedColumns = cache()->get('columns') ?? array_map(fn($c) => $c->field, $this->tableColumns);
+        $this->selectedColumns = cache()->get('columns') ?? array_map(fn ($c) => $c->field, $this->tableColumns);
     }
 
     public function updatedSelectedColumns(): void

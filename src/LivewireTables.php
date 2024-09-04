@@ -36,8 +36,8 @@ abstract class LivewireTables extends Component
     use WithPageSize;
     use WithPagination;
     use WithSearching;
-    use WithSorting;
     use WithSelectableColumns;
+    use WithSorting;
 
     public function render(): View
     {
