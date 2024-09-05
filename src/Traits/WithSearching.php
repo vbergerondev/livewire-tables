@@ -58,7 +58,8 @@ trait WithSearching
             ->pluck('field');
 
         foreach ($fields as $field) {
-            if (str_contains(strtolower($item[$field] ?? ''), strtolower($this->search))) {
+            if (is_string($item[$field])
+                && str_contains(strtolower($item[$field] ?? ''), strtolower($this->search))) {
                 return true;
             }
         }

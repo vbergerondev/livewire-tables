@@ -9,7 +9,6 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Pipeline;
 use Illuminate\View\View;
 use Livewire\Attributes\Computed;
-use Livewire\Attributes\Isolate;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Vbergeron\LivewireTables\Columns\Column;
@@ -22,12 +21,11 @@ use Vbergeron\LivewireTables\Traits\WithSearching;
 use Vbergeron\LivewireTables\Traits\WithSelectableColumns;
 use Vbergeron\LivewireTables\Traits\WithSorting;
 
-#[Isolate]
 /**
- * @property Filter[] $tableFilters
- * @property Column[] $tableColumns
- * @property LengthAwarePaginator<Model> $rows
- * @property Builder<Model>|null $queryBuilder
+ * @property-read Filter[] $tableFilters
+ * @property-read Column[] $tableColumns
+ * @property-read LengthAwarePaginator<Model> $rows
+ * @property-read Builder<Model>|null $queryBuilder
  */
 abstract class LivewireTables extends Component
 {

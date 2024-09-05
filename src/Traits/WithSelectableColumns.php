@@ -2,15 +2,26 @@
 
 namespace Vbergeron\LivewireTables\Traits;
 
+use Illuminate\Support\Facades\Cache;
+use TypeError;
 use Vbergeron\LivewireTables\Columns\Column;
 
 trait WithSelectableColumns
 {
+    /**
+     * @var string[]
+     */
     public array $selectedColumns = [];
 
     public function mountWithSelectableColumns(): void
     {
-        $this->selectedColumns = cache()->get('columns') ?? array_map(fn ($c) => $c->field, $this->tableColumns);
+        $columns = Cache::get('columns') ?? array_map(fn (Column $column): string => $column->field, $this->tableColumns);
+
+        if (! is_array($columns)) {
+            throw new TypeError('Variable is not an [array]');
+        }
+
+        $this->selectedColumns = $columns;
     }
 
     public function updatedSelectedColumns(): void

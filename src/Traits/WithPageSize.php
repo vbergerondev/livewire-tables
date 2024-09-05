@@ -3,6 +3,7 @@
 namespace Vbergeron\LivewireTables\Traits;
 
 use Livewire\Attributes\Computed;
+use TypeError;
 
 trait WithPageSize
 {
@@ -10,7 +11,12 @@ trait WithPageSize
 
     public function mountWithPageSize(): void
     {
-        $this->pageSize = config('livewire-tables.page-size');
+        $pageSize = config('livewire-tables.page-size');
+
+        if (! is_int($pageSize)) {
+            throw new TypeError('Variable is not an [int]');
+        }
+        $this->pageSize = $pageSize;
     }
 
     public function updatedPageSize(): void
@@ -18,6 +24,9 @@ trait WithPageSize
         $this->resetPage();
     }
 
+    /**
+     * @return int[]
+     */
     #[Computed]
     public function pageSizes(): array
     {
