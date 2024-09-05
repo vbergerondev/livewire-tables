@@ -26,6 +26,7 @@ use Vbergeron\LivewireTables\Traits\WithSorting;
  * @property-read Column[] $tableColumns
  * @property-read LengthAwarePaginator<Model> $rows
  * @property-read Builder<Model>|null $queryBuilder
+ * @property-read string $tableName
  */
 abstract class LivewireTables extends Component
 {
@@ -40,6 +41,12 @@ abstract class LivewireTables extends Component
     public function render(): View
     {
         return view('livewire-tables::index');
+    }
+
+    #[Computed]
+    public function tableName(): string
+    {
+        return str(class_basename($this))->kebab();
     }
 
     /**

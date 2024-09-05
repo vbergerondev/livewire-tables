@@ -2,9 +2,8 @@
 
 namespace Vbergeron\LivewireTables\Traits;
 
-use Illuminate\Support\Facades\Cache;
-use TypeError;
 use Vbergeron\LivewireTables\Columns\Column;
+use Vbergeron\LivewireTables\Contracts\SelectedColumnsStorageInterface;
 
 trait WithSelectableColumns
 {
@@ -13,20 +12,20 @@ trait WithSelectableColumns
      */
     public array $selectedColumns = [];
 
-    public function mountWithSelectableColumns(): void
+    public function mountWithSelectableColumns(SelectedColumnsStorageInterface $columnsStorage): void
     {
-        $columns = Cache::get('columns') ?? array_map(fn (Column $column): string => $column->field, $this->tableColumns);
-
-        if (! is_array($columns)) {
-            throw new TypeError('Variable is not an [array]');
-        }
-
-        $this->selectedColumns = $columns;
+        $this->selectedColumns = $columnsStorage->get(
+            key: sprintf('livewire-tables.%s.selected-columns', $this->tableName),
+            default: array_map(fn (Column $column): string => $column->field, $this->tableColumns),
+        );
     }
 
-    public function updatedSelectedColumns(): void
+    public function updatedSelectedColumns(SelectedColumnsStorageInterface $columnsStorage): void
     {
-        cache()->put('columns', $this->selectedColumns, now()->addYear());
+        $columnsStorage->set(
+            key: sprintf('livewire-tables.%s.selected-columns', $this->tableName),
+            values: $this->selectedColumns,
+        );
     }
 
     public function isColumnSelected(Column $column): bool

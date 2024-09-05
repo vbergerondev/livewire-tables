@@ -4,6 +4,8 @@ namespace Vbergeron\LivewireTables;
 
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
+use Vbergeron\LivewireTables\Contracts\CachedSelectedColumns;
+use Vbergeron\LivewireTables\Contracts\SelectedColumnsStorageInterface;
 
 class LivewireTablesServiceProvider extends PackageServiceProvider
 {
@@ -19,5 +21,12 @@ class LivewireTablesServiceProvider extends PackageServiceProvider
             ->hasConfigFile()
             ->hasViews()
             ->hasTranslations();
+    }
+
+    public function register()
+    {
+        parent::register();
+
+        $this->app->singleton(SelectedColumnsStorageInterface::class, CachedSelectedColumns::class);
     }
 }
