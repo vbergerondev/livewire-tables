@@ -21,6 +21,8 @@ class LivewireTablesServiceProvider extends PackageServiceProvider
             ->hasConfigFile()
             ->hasViews()
             ->hasTranslations();
+
+        config()->set('livewire.pagination_theme', 'bootstrap');
     }
 
     public function register()

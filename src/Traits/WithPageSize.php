@@ -10,7 +10,7 @@ trait WithPageSize
 
     public function mountWithPageSize(): void
     {
-        $this->pageSize = config()->integer('livewire-tables.page-size');
+        $this->pageSize = app('config')->integer('livewire-tables.page-size');
     }
 
     public function updatedPageSize(): void
