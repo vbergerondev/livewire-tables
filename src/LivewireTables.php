@@ -9,11 +9,13 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Pipeline;
 use Illuminate\View\View;
 use Livewire\Attributes\Computed;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Vbergeron\LivewireTables\Columns\Column;
 use Vbergeron\LivewireTables\Filters\Filter;
 use Vbergeron\LivewireTables\Models\TableData;
+use Vbergeron\LivewireTables\Traits\WithBulkActions;
 use Vbergeron\LivewireTables\Traits\WithFiltering;
 use Vbergeron\LivewireTables\Traits\WithJoins;
 use Vbergeron\LivewireTables\Traits\WithPageSize;
@@ -24,12 +26,15 @@ use Vbergeron\LivewireTables\Traits\WithSorting;
 /**
  * @property-read Filter[] $tableFilters
  * @property-read Column[] $tableColumns
+ * @property-read array $tableBulkActions
+ * @property-read bool $hasBulkActions
  * @property-read LengthAwarePaginator<Model> $rows
  * @property-read Builder<Model>|null $queryBuilder
  * @property-read string $tableName
  */
 abstract class LivewireTables extends Component
 {
+    use WithBulkActions;
     use WithFiltering;
     use WithJoins;
     use WithPageSize;
@@ -37,6 +42,9 @@ abstract class LivewireTables extends Component
     use WithSearching;
     use WithSelectableColumns;
     use WithSorting;
+
+    #[Locked]
+    public string $primaryKey = 'id';
 
     public function render(): View
     {
@@ -78,6 +86,21 @@ abstract class LivewireTables extends Component
     public function tableColumns(): array
     {
         return $this->columns();
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    #[Computed]
+    public function tableBulkActions(): array
+    {
+        return $this->bulkActions();
+    }
+
+    #[Computed]
+    public function hasBulkActions(): bool
+    {
+        return count($this->tableBulkActions) > 0;
     }
 
     /**
@@ -166,4 +189,6 @@ abstract class LivewireTables extends Component
     abstract protected function columns(): array;
 
     abstract protected function filters(): array;
+
+    abstract protected function bulkActions(): array;
 }
