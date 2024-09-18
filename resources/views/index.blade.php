@@ -5,20 +5,19 @@
 @endphp
 <div x-data x-cloak>
 
-    <div class="row">
-        <div class="col-md-9">
+    <div class="d-flex justify-content-between">
+        <div class="w-50">
             <x-livewire-tables::search />
         </div>
-        <div class="col-md-1">
-            <x-livewire-tables::filters />
+        <div class="d-flex align-items-center justify-content-between gap-2">
+            <x-livewire-tables::toolbar.bulk-actions />
+            <x-livewire-tables::toolbar.filters />
+            <x-livewire-tables::toolbar.columns />
+            <x-livewire-tables::toolbar.bookmarks />
         </div>
 
-        <div class="col-md-1">
-            <x-livewire-tables::columns-selector />
-        </div>
     </div>
 
-    <x-livewire-tables::bulk-actions />
 
     <div class="my-1">
         <div class="d-flex align-items-center justify-content-between">
