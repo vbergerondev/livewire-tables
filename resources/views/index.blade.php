@@ -9,18 +9,27 @@
         <div class="w-50">
             <x-livewire-tables::search />
         </div>
-        <div class="d-flex align-items-center justify-content-between gap-2">
-            <x-livewire-tables::toolbar.bulk-actions />
-            <x-livewire-tables::toolbar.filters />
-            <x-livewire-tables::toolbar.columns />
-            <x-livewire-tables::toolbar.bookmarks />
-        </div>
+        <div>
+            <div class="d-flex align-items-center gap-2 gap mb-2">
+                <x-livewire-tables::toolbar.filters />
+                <x-livewire-tables::toolbar.columns />
+                <x-livewire-tables::toolbar.bookmarks />
 
+                @if($this->isExportable)
+                    <x-livewire-tables::toolbar.export />
+                @endif
+            </div>
+        </div>
     </div>
 
 
-    <div class="my-3 w-25">
-        <x-livewire-tables::page-size-selector />
+    <div class="my-1 d-flex justify-content-between align-items-center">
+        <div class="w-25">
+            <x-livewire-tables::page-size-selector />
+        </div>
+        <div>
+            <x-livewire-tables::toolbar.bulk-actions />
+        </div>
     </div>
 
     <table class="table table-striped">

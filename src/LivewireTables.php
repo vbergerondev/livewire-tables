@@ -13,6 +13,7 @@ use Livewire\Attributes\Locked;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Vbergeron\LivewireTables\Columns\Column;
+use Vbergeron\LivewireTables\Contracts\Exportable;
 use Vbergeron\LivewireTables\Filters\Filter;
 use Vbergeron\LivewireTables\Models\TableData;
 use Vbergeron\LivewireTables\Traits\WithBulkActions;
@@ -101,6 +102,13 @@ abstract class LivewireTables extends Component
     public function hasBulkActions(): bool
     {
         return count($this->tableBulkActions) > 0;
+    }
+
+    #[Computed]
+    public function isExportable(): bool
+    {
+        return $this instanceof Exportable
+            && $this->canExport();
     }
 
     /**
